@@ -26,7 +26,7 @@ def read_maze():
     return maze_matrix
 
 
-def dfs(maze_matrix, start, end):
+def dfs(maze_matrix, start, end) -> list:
     stack = [(start, [])]
     visited = set()
 
@@ -37,25 +37,28 @@ def dfs(maze_matrix, start, end):
 
         visited.add((x, y))
 
-        for dx, dy, direction in moves:
-            nx, ny = x + dx, y + dy
+        for dx, dy, direction in moves:  # enumerate 4 directions
+            next_x, next_y = x + dx, y + dy
             if (
-                0 <= nx < len(maze_matrix)
-                and 0 <= ny < len(maze_matrix[0])
-                and (nx, ny) not in visited
+                0 <= next_x < len(maze_matrix)
+                and 0 <= next_y < len(maze_matrix[0])
+                and (next_x, next_y) not in visited
             ):
-                if maze_matrix[nx][ny] == 0 or maze_matrix[nx][ny] == "E":
-                    stack.append(((nx, ny), path + [direction]))
+                if (
+                    maze_matrix[next_x][next_y] == 0
+                    or maze_matrix[next_x][next_y] == "E"
+                ):
+                    stack.append(((next_x, next_y), path + [direction]))
     return None
 
 
-def find_positions(maze_matrix):
+def find_positions(maze_matrix) -> tuple:
     start = end = None
     for i, row in enumerate(maze_matrix):
-        for j, cell in enumerate(row):
-            if cell == "P":
+        for j, current in enumerate(row):
+            if current == "P":
                 start = (i, j)
-            elif cell == "E":
+            elif current == "E":
                 end = (i, j)
     return start, end
 
@@ -65,11 +68,10 @@ if __name__ == "__main__":
         try:
             maze_matrix = read_maze()
             start, end = find_positions(maze_matrix)
-            if start and end:
-                path = dfs(maze_matrix, start, end)
-                if path:
-                    for move in path:
-                        r.sendline(directions[move])
+            path = dfs(maze_matrix, start, end)
+
+            for move in path:
+                r.sendline(directions[move])
         except:
             break
     r.interactive()
